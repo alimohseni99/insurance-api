@@ -34,4 +34,8 @@ public class InsuranceController {
         return service.updateOffer(id, dto);
     }
 
+    @PostMapping("/{id}/accpet")
+    public Offer acceptOffer(@PathVariable Long id) {
+        return service.acceptOffer(id);
+    }
 }

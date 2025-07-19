@@ -21,10 +21,6 @@ public class InsuranceService {
         return repository.findAll();
     }
 
-    public Offer getOfferById(Long Id){
-        return repository.findById(Id).orElseGet(()-> null);
-    }
-
     public Offer createOffer(OfferCreateDto dto){
         Offer offer = new Offer();
         offer.setPersonalNumber(dto.personalNumber());
@@ -59,12 +55,17 @@ public class InsuranceService {
 
     }
 
-    public void deleteOfferById(Long id)  {
-        Optional<Offer> offer = repository.findById(id);
-
-        if (offer.isEmpty()){
+    public Offer acceptOffer(Long id){
+        Optional<Offer> optionalOffer = repository.findById(id);
+        if(optionalOffer.isEmpty()){
             throw new IllegalArgumentException("Offer not found");
         }
-        repository.delete(offer.get());
+        Offer offer = optionalOffer.orElseGet(()-> null);
+
+        offer.setStatus("APPROVED");
+
+        return repository.save(offer);
     }
+
+
 }
