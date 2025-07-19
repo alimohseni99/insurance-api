@@ -27,19 +27,7 @@ public class InsuranceService {
     }
 
     public Offer createOffer(OfferCreateDto dto) {
-        if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
-            throw new IllegalArgumentException("Personal number cannot be null or empty");
-        }
-        if (dto.monthlyPayment() <= 0) {
-            throw new IllegalArgumentException("Monthly payment cannot be negative or zero");
-        }
-        if (dto.loans() == null || dto.loans().isEmpty()) {
-            throw new IllegalArgumentException("Loans cannot be null or empty");
-        }
-        boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
-        if (hasInvalidLoan) {
-            throw new IllegalArgumentException("Loans cannot contain null, negative or zero values");
-        }
+        validateOfferDto(dto);
 
         Offer offer = new Offer();
         offer.setPersonalNumber(dto.personalNumber());
@@ -48,9 +36,7 @@ public class InsuranceService {
         offer.setStatus(OfferStatus.PENDING);
         offer.setCreatedDate(LocalDateTime.now());
 
-        double sumOfLoans = dto.loans().stream().mapToDouble(Double::doubleValue).sum();
-        double premium = sumOfLoans * 0.038;
-        offer.setPremium(premium);
+        offer.setPremium(calculatePremium(dto.loans()));
 
         return repository.save(offer);
     }
@@ -64,9 +50,7 @@ public class InsuranceService {
         offer.setPersonalNumber(dto.personalNumber());
         offer.setUpdatedTime(LocalDateTime.now());
 
-        double sumOfLoans = dto.loans().stream().mapToDouble(Double::doubleValue).sum();
-        double premium = sumOfLoans * 0.038;
-        offer.setPremium(premium);
+        offer.setPremium(calculatePremium(dto.loans()));
 
         return repository.save(offer);
     }
@@ -90,10 +74,33 @@ public class InsuranceService {
         return repository.save(offer);
     }
 
-    private boolean isOfferExpired(Offer offer, LocalDateTime referenceTime) {
+    private double calculatePremium(List<Double> loans) {
+        double sumOfLoans = loans.stream().mapToDouble(Double::doubleValue).sum();
+        return sumOfLoans * 0.038;
+    }
+
+    private void validateOfferDto(OfferCreateDto dto) {
+        if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
+            throw new IllegalArgumentException("Personal number cannot be null or empty");
+        }
+        if (dto.monthlyPayment() <= 0) {
+            throw new IllegalArgumentException("Monthly payment cannot be negative or zero");
+        }
+        if (dto.loans() == null || dto.loans().isEmpty()) {
+            throw new IllegalArgumentException("Loans cannot be null or empty");
+        }
+        boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
+        if (hasInvalidLoan) {
+            throw new IllegalArgumentException("Loans cannot contain null, negative or zero values");
+        }
+    }
+
+
+    public boolean isOfferExpired(Offer offer, LocalDateTime referenceTime) {
         return offer.getStatus() == OfferStatus.PENDING &&
                 offer.getCreatedDate().isBefore(referenceTime.minusDays(30));
     }
+
 
     @Transactional
     @Scheduled(cron = "*/30 * * * * *") // kör var 30:e sekund för testning
