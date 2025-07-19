@@ -1,25 +1,20 @@
-package org.example.insuranceapi;
+package org.example.insuranceapi.model;
 
 
 import jakarta.persistence.*;
-import org.example.insuranceapi.dto.LoanDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
+@Table(name="offers")
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
-    private String personnummer;
-
-    @ElementCollection
-    @CollectionTable(name = "offer_loans", joinColumns = @JoinColumn(name = "offer_id"))
-    @Column(name = "loan_amount")
+    private String personalNumber;
 
     private List<Double> loans = new ArrayList<>();
     private double monthlyAmount;
@@ -27,9 +22,8 @@ public class Offer {
     private String status;
 
 
-    public Offer(UUID id, String personnummer, List<Double> loans, double monthlyAmount) {
-        this.id = id;
-        this.personnummer = personnummer;
+    public Offer(String personalNumber, List<Double> loans, double monthlyAmount) {
+        this.personalNumber = personalNumber;
         this.loans = loans;
         this.monthlyAmount = monthlyAmount;
     }
@@ -37,12 +31,12 @@ public class Offer {
     public Offer(){}
 
 
-    public String getPersonnummer() {
-        return personnummer;
+    public String getPersonalNumber() {
+        return personalNumber;
     }
 
-    public void setPersonnummer(String personnummer) {
-        this.personnummer = personnummer;
+    public void setPersonalNumber(String personalNumber) {
+        this.personalNumber = personalNumber;
     }
 
     public List<Double> getLoans() {

@@ -1,4 +1,5 @@
 package org.example.insuranceapi.dto;
 
-public interface LoanDto {
+public record LoanDto(double amount) {
+
 }
