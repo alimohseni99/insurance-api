@@ -1,12 +1,14 @@
 package org.example.insuranceapi.service;
 
 
+import jakarta.transaction.Transactional;
 import org.example.insuranceapi.exceptions.ConflictException;
 import org.example.insuranceapi.exceptions.NotFound;
 import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
 import org.example.insuranceapi.model.OfferStatus;
 import org.example.insuranceapi.repository.InsuranceRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -86,6 +88,23 @@ public class InsuranceService {
         offer.setAcceptedDate(LocalDateTime.now());
 
         return repository.save(offer);
+    }
+
+    @Transactional
+    @Scheduled(cron = "*/30 * * * * *") // This should be set (cron = "0 0 0 * * *" to run every day at midnight but for testing purposes we are going for every 30 sekund
+    public void checkOfferStatus(){
+        List<Offer> offers = repository.findAll();
+
+        LocalDateTime now = LocalDateTime.now();
+        for (Offer offer : offers) {
+            if (offer.getStatus() == OfferStatus.PENDING &&
+                offer.getCreatedDate().isBefore(now.minusDays(30))) {
+                offer.setStatus(OfferStatus.EXPIRED);
+                offer.setPersonalNumber("");
+                repository.save(offer);
+                System.out.println("This offers has been expired and now will be deleted" + offer);
+            }
+        }
     }
 
 
