@@ -2,7 +2,10 @@ package org.example.insuranceapi.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,12 @@ public class Offer {
     private List<Double> loans = new ArrayList<>();
     private double monthlyAmount;
     private double premium;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private OfferStatus status;
+    private LocalDate createdDate;
+    private LocalDate updatedTime;
+    private LocalDate acceptedDate;
 
 
     public Offer(String personalNumber, List<Double> loans, double monthlyAmount) {
@@ -63,11 +71,35 @@ public class Offer {
         this.premium = premium;
     }
 
-    public String getStatus() {
+    public OfferStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OfferStatus status) {
         this.status = status;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDate getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(LocalDate updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    public LocalDate getAcceptedDate() {
+        return acceptedDate;
+    }
+
+    public void setAcceptedDate(LocalDate acceptedDate) {
+        this.acceptedDate = acceptedDate;
     }
 }

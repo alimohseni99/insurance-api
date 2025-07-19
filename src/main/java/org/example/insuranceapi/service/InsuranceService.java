@@ -3,9 +3,11 @@ package org.example.insuranceapi.service;
 
 import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
+import org.example.insuranceapi.model.OfferStatus;
 import org.example.insuranceapi.repository.InsuranceRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +28,8 @@ public class InsuranceService {
         offer.setPersonalNumber(dto.personalNumber());
         offer.setLoans(dto.loans());
         offer.setMonthlyAmount(dto.monthlyPayment());
-        offer.setStatus("PENDING");
+        offer.setStatus(OfferStatus.PENDING);
+        offer.setCreatedDate(LocalDate.now());
 
         double sumOfLoans = dto.loans().stream().mapToDouble(Double::doubleValue).sum();
         double premium = sumOfLoans  * 0.038;
@@ -46,6 +49,7 @@ public class InsuranceService {
         offer.setMonthlyAmount(dto.monthlyPayment());
         offer.setLoans(dto.loans());
         offer.setPersonalNumber(dto.personalNumber());
+        offer.setUpdatedTime(LocalDate.now());
 
         double sumOfLoans = dto.loans().stream().mapToDouble(Double::doubleValue).sum();
         double premium = sumOfLoans * 0.038;
@@ -62,7 +66,8 @@ public class InsuranceService {
         }
         Offer offer = optionalOffer.orElseGet(()-> null);
 
-        offer.setStatus("APPROVED");
+        offer.setStatus(OfferStatus.ACCEPTED);
+        offer.setAcceptedDate(LocalDate.now());
 
         return repository.save(offer);
     }

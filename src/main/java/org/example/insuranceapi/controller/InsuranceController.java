@@ -38,4 +38,5 @@ public class InsuranceController {
     public Offer acceptOffer(@PathVariable Long id) {
         return service.acceptOffer(id);
     }
+
 }
