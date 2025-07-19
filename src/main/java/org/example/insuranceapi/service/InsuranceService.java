@@ -29,6 +29,25 @@ public class InsuranceService {
     }
 
     public Offer createOffer(OfferCreateDto dto){
+
+        if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
+            throw new IllegalArgumentException("Personal number cannot be null or empty");
+        }
+        if (dto.monthlyPayment() <= 0 ){
+            throw new IllegalArgumentException("Monthly payment cannot be negative or zero");
+        }
+
+        if (dto.loans() == null || dto.loans().isEmpty()){
+            throw new IllegalArgumentException("Loans cannot be null or empty");
+        }
+
+
+
+        boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
+        if (hasInvalidLoan) {
+            throw new IllegalArgumentException("Loans cannot contain null, negative or zero values");
+        }
+
         Offer offer = new Offer();
         offer.setPersonalNumber(dto.personalNumber());
         offer.setLoans(dto.loans());
@@ -66,6 +85,7 @@ public class InsuranceService {
 
     public Offer acceptOffer(Long id){
         Optional<Offer> optionalOffer = repository.findById(id);
+
         if(optionalOffer.isEmpty()){
             throw new NotFound("Could not find offer with id: " + id);
         }
@@ -78,9 +98,6 @@ public class InsuranceService {
                 optionalOffer.get().getStatus().equals(OfferStatus.EXPIRED)) {
             throw new ConflictException("Offer with id: " + id + " has expired");
         }
-
-        System.out.println("Created date: " + optionalOffer.get().getCreatedDate());
-        System.out.println("Now minus 30 days: " + LocalDateTime.now().minusDays(30));
 
         Offer offer = optionalOffer.orElseGet(()-> null);
 

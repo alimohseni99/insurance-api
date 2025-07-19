@@ -46,7 +46,7 @@ Denna applikation hanterar:
 
 1. **Klona repositoriet**:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/alimohseni99/insurance-api.git>
    cd insurance-api
    ```
 
@@ -77,14 +77,11 @@ Applikationen startar på `http://localhost:8080`
 ### Exempel på Request Body för POST /api/offer
 ```json
 {
-  "personalNumber": "19901010-1234",
-  "loans": [
-    {
-      "amount": 2000000,
-      "monthlyPayment": 8500
-    }
-  ],
-  "totalMonthlyPayment": 8500
+   "personalNumber": "19901010-1234",
+   "loans": [
+      5000, 10000, 25000
+   ],
+   "monthlyPayment": 950
 }
 ```
 
