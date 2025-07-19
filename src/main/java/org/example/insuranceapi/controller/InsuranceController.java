@@ -19,11 +19,6 @@ public class InsuranceController {
         this.service = insuranceRepository;
     }
 
-    @GetMapping
-    public List<Offer> getAllOffers() {
-        return service.getAllOffers();
-    }
-
     @PostMapping
     public Offer createOffer(@RequestBody OfferCreateDto dto) {
        return service.createOffer(dto);

@@ -2,10 +2,7 @@ package org.example.insuranceapi.controller;
 
 import org.example.insuranceapi.dto.ConversionStatsDto;
 import org.example.insuranceapi.service.StatsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/stats")
@@ -16,7 +13,7 @@ public class StatsController {
         this.service = service;
     }
 
-    @PostMapping("conversion")
+    @GetMapping("conversion")
     public ConversionStatsDto getConversionStats(@RequestParam(defaultValue = "30") int days){
         return service.getConversionStats(days);
     }

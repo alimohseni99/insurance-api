@@ -24,10 +24,6 @@ public class InsuranceService {
         this.repository = repository;
     }
 
-    public List<Offer> getAllOffers(){
-        return repository.findAll();
-    }
-
     public Offer createOffer(OfferCreateDto dto){
 
         if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
@@ -40,8 +36,6 @@ public class InsuranceService {
         if (dto.loans() == null || dto.loans().isEmpty()){
             throw new IllegalArgumentException("Loans cannot be null or empty");
         }
-
-
 
         boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
         if (hasInvalidLoan) {
