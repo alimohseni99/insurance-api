@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +20,18 @@ public class Offer {
     @Column(nullable = false)
     private String personalNumber;
 
+    @ElementCollection
+    @CollectionTable(name = "offer_loans", joinColumns = @JoinColumn(name = "offer_id"))
+    @Column(name = "loan_amount")
     private List<Double> loans = new ArrayList<>();
     private double monthlyAmount;
     private double premium;
 
     @Enumerated(EnumType.STRING)
     private OfferStatus status;
-    private LocalDate createdDate;
-    private LocalDate updatedTime;
-    private LocalDate acceptedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedTime;
+    private LocalDateTime acceptedDate;
 
 
     public Offer(String personalNumber, List<Double> loans, double monthlyAmount) {
@@ -79,27 +83,27 @@ public class Offer {
         this.status = status;
     }
 
-    public LocalDate getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public LocalDate getUpdatedTime() {
+    public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDate updatedTime) {
+    public void setUpdatedTime(LocalDateTime updatedTime) {
         this.updatedTime = updatedTime;
     }
 
-    public LocalDate getAcceptedDate() {
+    public LocalDateTime getAcceptedDate() {
         return acceptedDate;
     }
 
-    public void setAcceptedDate(LocalDate acceptedDate) {
+    public void setAcceptedDate(LocalDateTime acceptedDate) {
         this.acceptedDate = acceptedDate;
     }
 }

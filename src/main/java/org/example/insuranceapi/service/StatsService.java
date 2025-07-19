@@ -6,6 +6,7 @@ import org.example.insuranceapi.repository.InsuranceRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,7 +24,7 @@ public class StatsService {
 
         long acceptedWithinDays = allOffers.stream()
                 .filter(o -> o.getAcceptedDate() != null)
-                .filter(o -> o.getAcceptedDate().isAfter(LocalDate.now().minusDays(days)))
+                .filter(o -> o.getAcceptedDate().isAfter(LocalDateTime.now().minusDays(days)))
                 .count();
 
         double conversionRate = total == 0 ? 0 : (acceptedWithinDays * 100.0) / total;
