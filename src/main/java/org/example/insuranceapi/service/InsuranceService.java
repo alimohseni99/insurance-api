@@ -1,6 +1,5 @@
 package org.example.insuranceapi.service;
 
-
 import jakarta.transaction.Transactional;
 import org.example.insuranceapi.exceptions.ConflictException;
 import org.example.insuranceapi.exceptions.NotFound;
@@ -8,35 +7,35 @@ import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
 import org.example.insuranceapi.model.OfferStatus;
 import org.example.insuranceapi.repository.InsuranceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InsuranceService {
 
+    private static final Logger logger = LoggerFactory.getLogger(InsuranceService.class);
+
     private final InsuranceRepository repository;
+
     public InsuranceService(InsuranceRepository repository) {
         this.repository = repository;
     }
 
-    public Offer createOffer(OfferCreateDto dto){
-
+    public Offer createOffer(OfferCreateDto dto) {
         if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
             throw new IllegalArgumentException("Personal number cannot be null or empty");
         }
-        if (dto.monthlyPayment() <= 0 ){
+        if (dto.monthlyPayment() <= 0) {
             throw new IllegalArgumentException("Monthly payment cannot be negative or zero");
         }
-
-        if (dto.loans() == null || dto.loans().isEmpty()){
+        if (dto.loans() == null || dto.loans().isEmpty()) {
             throw new IllegalArgumentException("Loans cannot be null or empty");
         }
-
         boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
         if (hasInvalidLoan) {
             throw new IllegalArgumentException("Loans cannot contain null, negative or zero values");
@@ -50,19 +49,15 @@ public class InsuranceService {
         offer.setCreatedDate(LocalDateTime.now());
 
         double sumOfLoans = dto.loans().stream().mapToDouble(Double::doubleValue).sum();
-        double premium = sumOfLoans  * 0.038;
+        double premium = sumOfLoans * 0.038;
         offer.setPremium(premium);
 
         return repository.save(offer);
     }
 
-    public Offer updateOffer(Long id, OfferCreateDto dto){
-        Optional<Offer> optionalOffer = repository.findById(id);
-        if(optionalOffer.isEmpty()){
-            throw new NotFound("Could not find offer with id: " + id);
-        }
-
-        Offer offer = optionalOffer.orElseGet(()-> null);
+    public Offer updateOffer(Long id, OfferCreateDto dto) {
+        Offer offer = repository.findById(id)
+                .orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
 
         offer.setMonthlyAmount(dto.monthlyPayment());
         offer.setLoans(dto.loans());
@@ -74,26 +69,20 @@ public class InsuranceService {
         offer.setPremium(premium);
 
         return repository.save(offer);
-
     }
 
-    public Offer acceptOffer(Long id){
-        Optional<Offer> optionalOffer = repository.findById(id);
+    public Offer acceptOffer(Long id) {
+        Offer offer = repository.findById(id)
+                .orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
 
-        if(optionalOffer.isEmpty()){
-            throw new NotFound("Could not find offer with id: " + id);
-        }
-
-        if (optionalOffer.get().getStatus().equals(OfferStatus.ACCEPTED)) {
+        if (offer.getStatus() == OfferStatus.ACCEPTED) {
             throw new ConflictException("Offer has already been accepted");
         }
 
-        if (optionalOffer.get().getCreatedDate().isBefore(LocalDateTime.now().minusDays(30)) ||
-                optionalOffer.get().getStatus().equals(OfferStatus.EXPIRED)) {
+        if (offer.getCreatedDate().isBefore(LocalDateTime.now().minusDays(30)) ||
+                offer.getStatus() == OfferStatus.EXPIRED) {
             throw new ConflictException("Offer with id: " + id + " has expired");
         }
-
-        Offer offer = optionalOffer.orElseGet(()-> null);
 
         offer.setStatus(OfferStatus.ACCEPTED);
         offer.setAcceptedDate(LocalDateTime.now());
@@ -101,22 +90,24 @@ public class InsuranceService {
         return repository.save(offer);
     }
 
-    @Transactional
-    @Scheduled(cron = "*/30 * * * * *") // This should be set (cron = "0 0 0 * * *" to run every day at midnight but for testing purposes we are going for every 30 sekund
-    public void checkForExpiredOffers(){
-        List<Offer> offers = repository.findAll();
+    private boolean isOfferExpired(Offer offer, LocalDateTime referenceTime) {
+        return offer.getStatus() == OfferStatus.PENDING &&
+                offer.getCreatedDate().isBefore(referenceTime.minusDays(30));
+    }
 
+    @Transactional
+    @Scheduled(cron = "*/30 * * * * *") // kör var 30:e sekund för testning
+    public void checkForExpiredOffers() {
         LocalDateTime now = LocalDateTime.now();
+
+        List<Offer> offers = repository.findAll();
         for (Offer offer : offers) {
-            if (offer.getStatus() == OfferStatus.PENDING &&
-                offer.getCreatedDate().isBefore(now.minusDays(30))) {
+            if (isOfferExpired(offer, now)) {
                 offer.setStatus(OfferStatus.EXPIRED);
                 offer.setPersonalNumber("");
                 repository.save(offer);
-                System.out.println("This offers has been expired and now will be deleted" + offer);
+                logger.info("These offers has been expired: {}", offer);
             }
         }
     }
-
-
 }

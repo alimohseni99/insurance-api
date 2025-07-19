@@ -46,7 +46,7 @@ public class InsuranceServiceTest {
 
     @Test
     void checkOfferStatus_shouldExpireOldPendingOffers() {
-        service.checkOfferStatus();
+        service.checkForExpiredOffers();
 
         List<Offer> allOffers = repository.findAll();
 
