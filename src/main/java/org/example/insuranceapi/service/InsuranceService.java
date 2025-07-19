@@ -103,7 +103,7 @@ public class InsuranceService {
 
     @Transactional
     @Scheduled(cron = "*/30 * * * * *") // This should be set (cron = "0 0 0 * * *" to run every day at midnight but for testing purposes we are going for every 30 sekund
-    public void checkOfferStatus(){
+    public void checkForExpiredOffers(){
         List<Offer> offers = repository.findAll();
 
         LocalDateTime now = LocalDateTime.now();
