@@ -33,6 +33,8 @@ public class Offer {
     private LocalDateTime updatedTime;
     private LocalDateTime acceptedDate;
 
+    private static final long EXPIRATION_DAYS = 30;
+
 
     public Offer(String personalNumber, List<Double> loans, double monthlyAmount) {
         this.personalNumber = personalNumber;
@@ -105,5 +107,11 @@ public class Offer {
 
     public void setAcceptedDate(LocalDateTime acceptedDate) {
         this.acceptedDate = acceptedDate;
+    }
+
+    public boolean isExpired(LocalDateTime referenceTime) {
+        return this.status == OfferStatus.PENDING &&
+                this.createdDate != null &&
+                this.createdDate.isBefore(referenceTime.minusDays(EXPIRATION_DAYS));
     }
 }

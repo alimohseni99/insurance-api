@@ -78,26 +78,21 @@ public class InsuranceService {
         return sumOfLoans * 0.038;
     }
 
-
-    public boolean isOfferExpired(Offer offer, LocalDateTime referenceTime) {
-        return offer.getStatus() == OfferStatus.PENDING &&
-                offer.getCreatedDate().isBefore(referenceTime.minusDays(30));
-    }
-
-
     @Transactional
     @Scheduled(cron = "*/30 * * * * *") // kör var 30:e sekund för testning
     public void checkForExpiredOffers() {
         LocalDateTime now = LocalDateTime.now();
 
-        List<Offer> offers = repository.findAll();
-        for (Offer offer : offers) {
-            if (isOfferExpired(offer, now)) {
-                offer.setStatus(OfferStatus.EXPIRED);
-                offer.setPersonalNumber("");
-                repository.save(offer);
-                logger.info("These offers has been expired: {}", offer);
-            }
+        List<Offer> expiredOffers = repository.findAll().stream()
+                .filter(offer -> offer.isExpired(now))
+                .toList();
+
+        for (Offer offer : expiredOffers) {
+            offer.setStatus(OfferStatus.EXPIRED);
+            offer.setPersonalNumber("");
+            logger.info("Offer expired and updated: {}", offer);
         }
+
+        repository.saveAll(expiredOffers);
     }
 }
