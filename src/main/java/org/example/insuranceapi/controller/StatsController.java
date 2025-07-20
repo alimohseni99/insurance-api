@@ -3,7 +3,6 @@ package org.example.insuranceapi.controller;
 import org.example.insuranceapi.dto.ConversionStatsDto;
 import org.example.insuranceapi.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class InsuranceServiceTest {
+public class IntegrationTest {
 
     @Autowired
     private InsuranceRepository repository;

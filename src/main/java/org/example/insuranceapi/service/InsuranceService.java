@@ -2,7 +2,7 @@ package org.example.insuranceapi.service;
 
 import jakarta.transaction.Transactional;
 import org.example.insuranceapi.exception.ConflictException;
-import org.example.insuranceapi.exception.NotFound;
+import org.example.insuranceapi.exception.OfferNotFound;
 import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
 import org.example.insuranceapi.model.OfferStatus;
@@ -41,7 +41,7 @@ public class InsuranceService {
     }
 
     public Offer updateOffer(Long id, OfferCreateDto dto) {
-        Offer offer = repository.findById(id).orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
+        Offer offer = repository.findById(id).orElseThrow(() -> new OfferNotFound("Could not find offer with id: " + id));
 
         offer.setMonthlyAmount(dto.monthlyPayment());
         offer.setLoans(dto.loans());
@@ -54,7 +54,7 @@ public class InsuranceService {
     }
 
     public Offer acceptOffer(Long id) {
-        Offer offer = repository.findById(id).orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
+        Offer offer = repository.findById(id).orElseThrow(() -> new OfferNotFound("Could not find offer with id: " + id));
 
         if (offer.getStatus() == OfferStatus.ACCEPTED) {
             throw new ConflictException("Offer has already been accepted");

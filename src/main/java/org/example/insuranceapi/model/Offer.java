@@ -119,8 +119,6 @@ public class Offer {
     }
 
     public boolean isExpired(LocalDateTime referenceTime) {
-        return this.status == OfferStatus.PENDING &&
-                this.createdDate != null &&
-                this.createdDate.isBefore(referenceTime.minusDays(EXPIRATION_DAYS));
+        return this.status == OfferStatus.PENDING && this.createdDate != null && this.createdDate.isBefore(referenceTime.minusDays(EXPIRATION_DAYS));
     }
 }

@@ -5,7 +5,6 @@ import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.repository.InsuranceRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
