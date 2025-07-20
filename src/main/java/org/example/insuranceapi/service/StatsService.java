@@ -17,6 +17,14 @@ public class StatsService {
     }
 
     public ConversionStatsDto getConversionStats(int days) {
+
+        if (days <= 0) {
+            throw new IllegalArgumentException("Days must be greater than zero");
+        }
+        if (days > 365) {
+            throw new IllegalArgumentException("Days must be less than 365");
+        }
+
         List<Offer> allOffers = repository.findAll();
 
         long total = allOffers.size();
