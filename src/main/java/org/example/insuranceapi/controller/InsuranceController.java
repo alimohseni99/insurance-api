@@ -28,17 +28,17 @@ public class InsuranceController {
 
     @PostMapping
     public ResponseEntity<Offer>  createOffer(@Valid @RequestBody OfferCreateDto dto) {
-       return ResponseEntity.status(HttpStatus.CREATED).body(service.createOffer(dto));
+       return new ResponseEntity<>(service.createOffer(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Offer> updateOffer(@PathVariable Long id, @Valid @RequestBody OfferCreateDto dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateOffer(id, dto));
+        return new ResponseEntity<>(service.updateOffer(id, dto), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Offer> acceptOffer(@PathVariable Long id) {
-        return ResponseEntity.ok(service.acceptOffer(id));
+        return new ResponseEntity<>(service.acceptOffer(id), HttpStatus.OK);
     }
 
 
