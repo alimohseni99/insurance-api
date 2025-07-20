@@ -1,4 +1,4 @@
-package org.example.insuranceapi.exceptions;
+package org.example.insuranceapi.exception;
 
 
 import org.springframework.http.HttpHeaders;
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFound.class)
-    protected ResponseEntity<Object> handleNotFound(RuntimeException exception, WebRequest request){
+    protected ResponseEntity<Object> handleNotFound(RuntimeException exception, WebRequest request) {
         return handleExceptionInternal(exception,
                 exception.getMessage(),
                 new HttpHeaders(),
@@ -22,7 +22,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    protected ResponseEntity<Object> handleConflict(RuntimeException exception, WebRequest request){
+    protected ResponseEntity<Object> handleConflict(RuntimeException exception, WebRequest request) {
         return handleExceptionInternal(exception,
                 exception.getMessage(),
                 new HttpHeaders(),

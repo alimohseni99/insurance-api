@@ -1,8 +1,8 @@
 package org.example.insuranceapi.service;
 
 import jakarta.transaction.Transactional;
-import org.example.insuranceapi.exceptions.ConflictException;
-import org.example.insuranceapi.exceptions.NotFound;
+import org.example.insuranceapi.exception.ConflictException;
+import org.example.insuranceapi.exception.NotFound;
 import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
 import org.example.insuranceapi.model.OfferStatus;
@@ -41,8 +41,7 @@ public class InsuranceService {
     }
 
     public Offer updateOffer(Long id, OfferCreateDto dto) {
-        Offer offer = repository.findById(id)
-                .orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
+        Offer offer = repository.findById(id).orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
 
         offer.setMonthlyAmount(dto.monthlyPayment());
         offer.setLoans(dto.loans());
@@ -55,15 +54,13 @@ public class InsuranceService {
     }
 
     public Offer acceptOffer(Long id) {
-        Offer offer = repository.findById(id)
-                .orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
+        Offer offer = repository.findById(id).orElseThrow(() -> new NotFound("Could not find offer with id: " + id));
 
         if (offer.getStatus() == OfferStatus.ACCEPTED) {
             throw new ConflictException("Offer has already been accepted");
         }
 
-        if (offer.getCreatedDate().isBefore(LocalDateTime.now().minusDays(30)) ||
-                offer.getStatus() == OfferStatus.EXPIRED) {
+        if (offer.getCreatedDate().isBefore(LocalDateTime.now().minusDays(30)) || offer.getStatus() == OfferStatus.EXPIRED) {
             throw new ConflictException("Offer with id: " + id + " has expired");
         }
 
@@ -83,9 +80,7 @@ public class InsuranceService {
     public void checkForExpiredOffers() {
         LocalDateTime now = LocalDateTime.now();
 
-        List<Offer> expiredOffers = repository.findAll().stream()
-                .filter(offer -> offer.isExpired(now))
-                .toList();
+        List<Offer> expiredOffers = repository.findAll().stream().filter(offer -> offer.isExpired(now)).toList();
 
         for (Offer offer : expiredOffers) {
             offer.setStatus(OfferStatus.EXPIRED);

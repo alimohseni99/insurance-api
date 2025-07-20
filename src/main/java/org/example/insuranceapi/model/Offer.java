@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="offers")
+@Table(name = "offers")
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(nullable = false)
     private String personalNumber;
@@ -36,14 +36,23 @@ public class Offer {
     private static final long EXPIRATION_DAYS = 30;
 
 
-    public Offer(String personalNumber, List<Double> loans, double monthlyAmount) {
+    public Offer(long id, String personalNumber, List<Double> loans, double monthlyAmount) {
+        this.id = id;
         this.personalNumber = personalNumber;
         this.loans = loans;
         this.monthlyAmount = monthlyAmount;
     }
 
-    public Offer(){}
+    public Offer() {
+    }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getPersonalNumber() {
         return personalNumber;

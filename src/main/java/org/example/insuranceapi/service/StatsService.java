@@ -22,10 +22,7 @@ public class StatsService {
 
         long total = allOffers.size();
 
-        long acceptedWithinDays = allOffers.stream()
-                .filter(o -> o.getAcceptedDate() != null)
-                .filter(o -> o.getAcceptedDate().isAfter(LocalDateTime.now().minusDays(days)))
-                .count();
+        long acceptedWithinDays = allOffers.stream().filter(o -> o.getAcceptedDate() != null).filter(o -> o.getAcceptedDate().isAfter(LocalDateTime.now().minusDays(days))).count();
 
         double conversionRate = total == 0 ? 0 : (acceptedWithinDays * 100.0) / total;
 

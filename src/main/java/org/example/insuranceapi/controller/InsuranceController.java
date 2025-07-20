@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,19 +29,26 @@ public class InsuranceController {
     }
 
     @PostMapping
-    public ResponseEntity<Offer>  createOffer(@Valid @RequestBody OfferCreateDto dto) {
-       return new ResponseEntity<>(service.createOffer(dto), HttpStatus.CREATED);
+    public ResponseEntity<Offer> createOffer(@Valid @RequestBody OfferCreateDto dto) {
+        Offer offer = service.createOffer(dto);
+        URI location = URI.create("/api/v1/offers" + offer.getId());
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Offer> updateOffer(@PathVariable Long id, @Valid @RequestBody OfferCreateDto dto) {
-        return new ResponseEntity<>(service.updateOffer(id, dto), HttpStatus.OK);
+        Offer updatedOffer = service.updateOffer(id, dto);
+        URI location = URI.create("/api/v1/offers/" + updatedOffer.getId());
+        return ResponseEntity.ok().location(location).build();
     }
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Offer> acceptOffer(@PathVariable Long id) {
-        return new ResponseEntity<>(service.acceptOffer(id), HttpStatus.OK);
+        Offer acceptedOffer = service.acceptOffer(id);
+        URI location = URI.create("/api/v1/offers/" + acceptedOffer.getId());
+        return ResponseEntity.ok().location(location).body(acceptedOffer);
     }
+
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -53,6 +62,6 @@ public class InsuranceController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-                return errors;
+        return errors;
     }
 }

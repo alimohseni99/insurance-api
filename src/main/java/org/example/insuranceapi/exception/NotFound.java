@@ -1,4 +1,4 @@
-package org.example.insuranceapi.exceptions;
+package org.example.insuranceapi.exception;
 
 public class NotFound extends RuntimeException {
 

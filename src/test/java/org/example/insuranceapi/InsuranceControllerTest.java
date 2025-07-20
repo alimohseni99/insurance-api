@@ -25,8 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,11 +47,13 @@ class InsuranceControllerTest {
     private Offer dummyOffer;
 
     private static final String API_CONTEXT_ROOT = "/api/v1/offers";
+    long offerId = 1L;
+
 
     @BeforeEach
     void setUp() {
         dto = new OfferCreateDto("199010101234", List.of(5000.0), 50.0);
-        dummyOffer = new Offer("199010101234", List.of(5000.0), 50.0);
+        dummyOffer = new Offer(1,"199010101234", List.of(5000.0), 50.0);
     }
 
 
@@ -70,7 +71,6 @@ class InsuranceControllerTest {
 
     @Test
     void shouldUpdateOffer() throws Exception {
-        Long offerId = 1L;
         String requestBody = objectMapper.writeValueAsString(dto);
 
         Mockito.when(service.updateOffer(eq(offerId), any(OfferCreateDto.class))).thenReturn(dummyOffer);
@@ -91,8 +91,10 @@ class InsuranceControllerTest {
 
         mvc.perform(post(API_CONTEXT_ROOT + "/" + offerId + "/accept"))
                 .andExpect(status().isOk())
+                .andExpect(header().string("Location", "/api/v1/offers/" + offerId))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"));
     }
+
 
 
     @Test

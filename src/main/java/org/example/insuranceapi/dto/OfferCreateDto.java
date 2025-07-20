@@ -3,11 +3,9 @@ package org.example.insuranceapi.dto;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public record OfferCreateDto(
-        @Valid
 
         @NotNull(message = "Personal number cannot be null")
         @NotBlank(message = "Personal number cannot be blank")
@@ -23,6 +21,5 @@ public record OfferCreateDto(
         @Positive(message = "Monthly payment must be positive")
         Double monthlyPayment
 
-)
- {
+) {
 }
