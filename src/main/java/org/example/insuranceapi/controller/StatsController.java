@@ -20,7 +20,6 @@ public class StatsController {
 
     @GetMapping("conversion")
     public ResponseEntity<ConversionStatsDto> getConversionStats(@RequestParam(defaultValue = "30") int days) {
-        ConversionStatsDto stats = service.getConversionStats(days);
-        return ResponseEntity.ok().body(stats);
+        return ResponseEntity.ok(service.getConversionStats(days));
     }
 }

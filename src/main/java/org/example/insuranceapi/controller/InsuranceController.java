@@ -37,16 +37,12 @@ public class InsuranceController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Offer> updateOffer(@PathVariable Long id, @Valid @RequestBody OfferCreateDto dto) {
-        Offer updatedOffer = service.updateOffer(id, dto);
-        URI location = URI.create("/api/v1/offers/" + updatedOffer.getId());
-        return ResponseEntity.ok().location(location).build();
+        return ResponseEntity.ok(service.updateOffer(id, dto));
     }
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Offer> acceptOffer(@PathVariable Long id) {
-        Offer acceptedOffer = service.acceptOffer(id);
-        URI location = URI.create("/api/v1/offers/" + acceptedOffer.getId());
-        return ResponseEntity.ok().location(location).body(acceptedOffer);
+        return ResponseEntity.ok().body(service.acceptOffer(id));
     }
 
 

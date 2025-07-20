@@ -25,7 +25,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,7 +84,6 @@ class InsuranceControllerTest {
 
     @Test
     void shouldAcceptOffer() throws Exception {
-        Long offerId = 1L;
 
         dummyOffer.setStatus(OfferStatus.ACCEPTED);
 
@@ -91,10 +91,8 @@ class InsuranceControllerTest {
 
         mvc.perform(post(API_CONTEXT_ROOT + "/" + offerId + "/accept"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Location", "/api/v1/offers/" + offerId))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"));
     }
-
 
 
     @Test
