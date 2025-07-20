@@ -11,7 +11,6 @@ public record OfferCreateDto(
 
         @NotNull(message = "Personal number cannot be null")
         @NotBlank(message = "Personal number cannot be blank")
-        @Size(min = 10, max = 12, message = "Personal number must be between 10 and 20 numbers")
         @Pattern(regexp = "\\d{10,12}", message = "Personal number must be 10 to 12 digits")
         String personalNumber,
 
