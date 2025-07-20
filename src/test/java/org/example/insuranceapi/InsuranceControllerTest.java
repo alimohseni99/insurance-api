@@ -47,12 +47,12 @@ class InsuranceControllerTest {
     private OfferCreateDto dto;
     private Offer dummyOffer;
 
-    private static final String API_CONTEXT_ROOT = "/api/offer";
+    private static final String API_CONTEXT_ROOT = "/api/v1/offers";
 
     @BeforeEach
     void setUp() {
-        dto = new OfferCreateDto("19901010-1234", List.of(5000.0), 50.0);
-        dummyOffer = new Offer("19901010-1234", List.of(5000.0), 50.0);
+        dto = new OfferCreateDto("199010101234", List.of(5000.0), 50.0);
+        dummyOffer = new Offer("199010101234", List.of(5000.0), 50.0);
     }
 
 
@@ -65,7 +65,7 @@ class InsuranceControllerTest {
         mvc.perform(post(API_CONTEXT_ROOT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -100,7 +100,7 @@ class InsuranceControllerTest {
         ConversionStatsDto stats = new ConversionStatsDto(100, 25, 25.0);
         Mockito.when(statsService.getConversionStats(30)).thenReturn(stats);
 
-        mvc.perform(get("/api/stats/conversion"))
+        mvc.perform(get("/api/v1/stats/conversion"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalOffers").value(100))
                 .andExpect(jsonPath("$.acceptedWithinXDays").value(25));

@@ -5,12 +5,18 @@ import org.example.insuranceapi.model.Offer;
 import org.example.insuranceapi.dto.OfferCreateDto;
 import org.example.insuranceapi.service.InsuranceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
-@RequestMapping("/api/offer")
+@RequestMapping("/api/v1/offers")
 public class InsuranceController {
 
     private final InsuranceService service;
@@ -21,18 +27,32 @@ public class InsuranceController {
     }
 
     @PostMapping
-    public Offer createOffer(@Valid @RequestBody OfferCreateDto dto) {
-       return service.createOffer(dto);
+    public ResponseEntity<Offer>  createOffer(@Valid @RequestBody OfferCreateDto dto) {
+       return ResponseEntity.status(HttpStatus.CREATED).body(service.createOffer(dto));
     }
 
     @PutMapping("/{id}")
-    public Offer updateOffer(@PathVariable Long id, @Valid @RequestBody OfferCreateDto dto) {
-        return service.updateOffer(id, dto);
+    public ResponseEntity<Offer> updateOffer(@PathVariable Long id, @Valid @RequestBody OfferCreateDto dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateOffer(id, dto));
     }
 
     @PostMapping("/{id}/accept")
-    public Offer acceptOffer(@PathVariable Long id) {
-        return service.acceptOffer(id);
+    public ResponseEntity<Offer> acceptOffer(@PathVariable Long id) {
+        return ResponseEntity.ok(service.acceptOffer(id));
     }
 
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+                return errors;
+    }
 }

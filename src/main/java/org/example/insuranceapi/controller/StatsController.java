@@ -5,7 +5,7 @@ import org.example.insuranceapi.service.StatsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/stats")
+@RequestMapping("/api/v1/stats")
 public class StatsController {
     private final StatsService service;
 

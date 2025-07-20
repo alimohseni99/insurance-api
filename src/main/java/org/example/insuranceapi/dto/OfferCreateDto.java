@@ -1,23 +1,29 @@
 package org.example.insuranceapi.dto;
 
-import org.example.insuranceapi.model.Offer;
 
 import java.util.List;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 public record OfferCreateDto(
-        @NotBlank(message = "Personal number cannot be blank") String personalNumber,
-        @NotEmpty(message = "Loans cannot be empty") List<@Positive(message = "Loan amounts must be positive") Double> loans,
-        @Positive(message = "Monthly payment must be positive") double monthlyPayment
+        @Valid
+
+        @NotNull(message = "Personal number cannot be null")
+        @NotBlank(message = "Personal number cannot be blank")
+        @Size(min = 10, max = 12, message = "Personal number must be between 10 and 20 numbers")
+        @Pattern(regexp = "\\d{10,12}", message = "Personal number must be 10 to 12 digits")
+        String personalNumber,
+
+        @NotNull(message = "Loans cannot be null")
+        @NotEmpty(message = "Loans cannot be empty")
+        List<@Positive(message = "Loan amounts must be positive") Double> loans,
+
+
+        @NotNull(message = "Monthly payment is required")
+        @Positive(message = "Monthly payment must be positive")
+        Double monthlyPayment
+
 )
  {
-
-    public static Offer fromDto(OfferCreateDto dto){
-        return new Offer(dto.personalNumber, dto.loans, dto.monthlyPayment);
-    }
-
 }

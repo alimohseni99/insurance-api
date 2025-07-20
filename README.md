@@ -68,7 +68,6 @@ Applikationen startar på `http://localhost:8080`
 
 | Metod | Endpoint | Beskrivning |
 |-------|----------|-------------|
-| GET | `/api/offer` | Hämta alla offerter |
 | POST | `/api/offer` | Skapa ny offert |
 | PUT | `/api/offer/{id}` | Uppdatera befintlig offert |
 | POST | `/api/offer/{id}/accept` | Acceptera offert |

@@ -27,7 +27,6 @@ public class InsuranceService {
     }
 
     public Offer createOffer(OfferCreateDto dto) {
-        validateOfferDto(dto);
 
         Offer offer = new Offer();
         offer.setPersonalNumber(dto.personalNumber());
@@ -77,22 +76,6 @@ public class InsuranceService {
     private double calculatePremium(List<Double> loans) {
         double sumOfLoans = loans.stream().mapToDouble(Double::doubleValue).sum();
         return sumOfLoans * 0.038;
-    }
-
-    private void validateOfferDto(OfferCreateDto dto) {
-        if (dto.personalNumber() == null || dto.personalNumber().isBlank()) {
-            throw new IllegalArgumentException("Personal number cannot be null or empty");
-        }
-        if (dto.monthlyPayment() <= 0) {
-            throw new IllegalArgumentException("Monthly payment cannot be negative or zero");
-        }
-        if (dto.loans() == null || dto.loans().isEmpty()) {
-            throw new IllegalArgumentException("Loans cannot be null or empty");
-        }
-        boolean hasInvalidLoan = dto.loans().stream().anyMatch(loan -> loan == null || loan <= 0);
-        if (hasInvalidLoan) {
-            throw new IllegalArgumentException("Loans cannot contain null, negative or zero values");
-        }
     }
 
 
